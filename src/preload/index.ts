@@ -2,7 +2,20 @@ import { contextBridge } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 
 // Custom APIs for renderer
-const api = {}
+const api = {
+  // Robot functions
+  robot: {
+    simulateKeyPress: (key: string): Promise<{ success: boolean; error?: string }> => {
+      return window.electron.ipcRenderer.invoke('simulateKeyPress', key)
+    },
+    tapKey: (key: string): Promise<{ success: boolean; error?: string }> => {
+      return window.electron.ipcRenderer.invoke('tapKey', key)
+    },
+    toggleKey: (key: string, down: boolean): Promise<{ success: boolean; error?: string }> => {
+      return window.electron.ipcRenderer.invoke('toggleKey', key, down)
+    }
+  }
+}
 
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise

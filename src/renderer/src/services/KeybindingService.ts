@@ -1,5 +1,4 @@
 import { Keybinding } from '../store/useGestureStore'
-import robotjs from 'robotjs'
 
 class KeybindingService {
   private activeKeybindings: Map<string, Keybinding> = new Map()
@@ -80,41 +79,16 @@ class KeybindingService {
     this.keyPressListeners.forEach((listener) => listener(keyCombo))
   }
 
-  simulateKeyPress(keyBinding: string): void {
+  async simulateKeyPress(keyBinding: string): Promise<void> {
     console.log(`Simulating key press for: ${keyBinding}`)
-    // Split the key combination
-    // const keys = keyBinding.split('+')
-    // // Hold modifier keys
-    // const modifiers: string[] = []
-    // keys.forEach((key) => {
-    //   switch (key.toLowerCase()) {
-    //     case 'ctrl':
-    //     case 'control':
-    //       robotjs.keyToggle('control', 'down')
-    //       modifiers.push('control')
-    //       break
-    //     case 'alt':
-    //       robotjs.keyToggle('alt', 'down')
-    //       modifiers.push('alt')
-    //       break
-    //     case 'shift':
-    //       robotjs.keyToggle('shift', 'down')
-    //       modifiers.push('shift')
-    //       break
-    //     case 'cmd':
-    //     case 'command':
-    //       robotjs.keyToggle('command', 'down')
-    //       modifiers.push('command')
-    //       break
-    //   }
-    // })
-    // // Press the main key
-    // const mainKey = keys[keys.length - 1]
-    // robotjs.keyTap(mainKey)
-    // // Release modifier keys
-    // modifiers.forEach((modifier) => {
-    //   robotjs.keyToggle(modifier, 'up')
-    // })
+    try {
+      const result = await window.electron.ipcRenderer.invoke('simulateKeyPress', keyBinding)
+      if (!result.success) {
+        console.error('Failed to simulate key press:', result.error)
+      }
+    } catch (error) {
+      console.error('Error simulating key press:', error)
+    }
   }
 }
 

@@ -24,12 +24,19 @@ const SettingsScreen: React.FC = () => {
     toggleBinding,
     addProfile,
     deleteProfile,
-    setSearchQuery
+    setSearchQuery,
+    isGestureServiceActive,
+    initGestureService,
+    toggleGestureService
   } = useGestureStore()
 
   const [editingBinding, setEditingBinding] = useState<Keybinding | null>(null)
   const [isAddingProfile, setIsAddingProfile] = useState(false)
   const [newProfileName, setNewProfileName] = useState('')
+
+  useEffect(() => {
+    initGestureService()
+  }, [])
 
   const filteredProfiles = useMemo(() => {
     const query = searchQuery.toLowerCase()
@@ -273,6 +280,26 @@ const SettingsScreen: React.FC = () => {
             <p className="text-gray-600">Configure gesture-to-key mappings for your applications</p>
           </div>
           <div className="flex items-center gap-3 ml-4">
+            <button
+              onClick={toggleGestureService}
+              className={`px-4 py-2 rounded-md ${
+                isGestureServiceActive
+                  ? 'bg-red-600 hover:bg-red-700'
+                  : 'bg-green-600 hover:bg-green-700'
+              } text-white transition-colors flex items-center space-x-2`}
+            >
+              {isGestureServiceActive ? (
+                <>
+                  <span>Deactivate</span>
+                  <X className="h-4 w-4" />
+                </>
+              ) : (
+                <>
+                  <span>Activate</span>
+                  <Gamepad2 className="h-4 w-4" />
+                </>
+              )}
+            </button>
             {/* <button
               onClick={() => setShowGesturePreview(!showGesturePreview)}
               className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md"
@@ -313,10 +340,10 @@ const SettingsScreen: React.FC = () => {
 
             <div className="space-y-2">
               {filteredProfiles.map((profile) => (
-                <button
+                <div
                   key={profile}
                   onClick={() => setActiveProfile(profile)}
-                  className={`w-full text-left px-3 py-2 rounded-md ${
+                  className={`w-full text-left px-3 py-2 cursor-pointer rounded-md ${
                     activeProfile === profile
                       ? 'bg-blue-500 text-white'
                       : 'bg-gray-100 hover:bg-gray-200'
@@ -348,7 +375,7 @@ const SettingsScreen: React.FC = () => {
                         )}
                     </div>
                   </div>
-                </button>
+                </div>
               ))}
             </div>
           </div>

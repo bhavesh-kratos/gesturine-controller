@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
+import { gestureDetectionService } from '../services/GestureDetectionService'
 
 export interface Keybinding {
   id: number | string
@@ -19,6 +20,7 @@ interface GestureState {
   profiles: ProfileMap
   keybindings: Keybinding[]
   searchQuery: string
+  isGestureServiceActive: boolean
   setActiveProfile: (profile: string) => void
   addBinding: (binding: Keybinding) => void
   updateBinding: (binding: Keybinding) => void
@@ -27,6 +29,8 @@ interface GestureState {
   addProfile: (name: string) => void
   deleteProfile: (name: string) => void
   setSearchQuery: (query: string) => void
+  initGestureService: () => void
+  toggleGestureService: () => void
 }
 
 const DEFAULT_PROFILES: ProfileMap = {
@@ -42,11 +46,17 @@ export const useGestureStore = create<GestureState>()(
       profiles: DEFAULT_PROFILES,
       keybindings: [],
       searchQuery: '',
+      isGestureServiceActive: false,
 
       setActiveProfile: (profile) => {
+        const bindings = get().profiles[profile] || []
+        // When changing profiles, update the gesture detection service
+        gestureDetectionService.updateActiveBindings(bindings)
+        gestureDetectionService.start()
+
         set({
           activeProfile: profile,
-          keybindings: get().profiles[profile] || []
+          keybindings: bindings
         })
       },
 
@@ -61,6 +71,9 @@ export const useGestureStore = create<GestureState>()(
             [activeProfile]: updatedBindings
           }
         }))
+
+        // Update gesture service with new bindings
+        gestureDetectionService.updateActiveBindings(updatedBindings)
       },
 
       updateBinding: (binding) => {
@@ -76,6 +89,9 @@ export const useGestureStore = create<GestureState>()(
             [activeProfile]: updatedBindings
           }
         }))
+
+        // Update gesture service with modified bindings
+        gestureDetectionService.updateActiveBindings(updatedBindings)
       },
 
       deleteBinding: (id) => {
@@ -89,6 +105,9 @@ export const useGestureStore = create<GestureState>()(
             [activeProfile]: updatedBindings
           }
         }))
+
+        // Update gesture service with remaining bindings
+        gestureDetectionService.updateActiveBindings(updatedBindings)
       },
 
       toggleBinding: (id) => {
@@ -104,6 +123,9 @@ export const useGestureStore = create<GestureState>()(
             [activeProfile]: updatedBindings
           }
         }))
+
+        // Update gesture service with modified bindings
+        gestureDetectionService.updateActiveBindings(updatedBindings)
       },
 
       addProfile: (name) => {
@@ -120,16 +142,54 @@ export const useGestureStore = create<GestureState>()(
           return // Don't allow deleting default profiles
         }
         set((state) => {
-          const { [name]: _, ...restProfiles } = state.profiles
-          return {
-            profiles: restProfiles,
-            activeProfile: state.activeProfile === name ? 'Gaming' : state.activeProfile,
-            keybindings: state.activeProfile === name ? [] : state.keybindings
+          const { [name]: removedProfile, ...restProfiles } = state.profiles
+          const isActiveProfile = state.activeProfile === name
+
+          if (isActiveProfile) {
+            // If deleting active profile, deactivate gesture service
+            gestureDetectionService.stop()
           }
+
+          const newState = {
+            profiles: restProfiles,
+            activeProfile: isActiveProfile ? 'Gaming' : state.activeProfile,
+            keybindings: isActiveProfile ? [] : state.keybindings
+          }
+
+          if (isActiveProfile) {
+            // If switching to Gaming profile, update gesture service
+            gestureDetectionService.updateActiveBindings(newState.keybindings)
+            gestureDetectionService.start()
+          }
+
+          return newState
         })
       },
 
-      setSearchQuery: (query) => set({ searchQuery: query })
+      setSearchQuery: (query) => set({ searchQuery: query }),
+
+      initGestureService: () => {
+        const { isGestureServiceActive, activeProfile } = get()
+        if (isGestureServiceActive) {
+          const bindings = get().profiles[activeProfile] || []
+          // When changing profiles, update the gesture detection service
+          gestureDetectionService.updateActiveBindings(bindings)
+          gestureDetectionService.start() // gestureDetectionService.start()
+        } else {
+          gestureDetectionService.stop()
+        }
+      },
+
+      toggleGestureService: () => {
+        const state = get()
+        const newIsActive = !state.isGestureServiceActive
+        if (newIsActive) {
+          gestureDetectionService.start()
+        } else {
+          gestureDetectionService.stop()
+        }
+        set({ isGestureServiceActive: newIsActive })
+      }
     }),
     {
       name: 'gesture-storage',

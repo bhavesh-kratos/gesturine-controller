@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import GestureDetector from '../services/GestureDetector'
-import { is } from '@electron-toolkit/utils'
+import { gestureDetectionService } from '../services/GestureDetectionService'
 
 interface Props {
   // Add any props here if needed
@@ -23,6 +23,28 @@ const GestureDetectionComponent: React.FC<Props> = () => {
       }
     }
   }, [])
+  /*
+        const setupGestureCallback = (gesture: string, displayName: string): void => {
+        gestureDetectorRef.current?.onGesture(gesture, (data) => {
+          console.log(`${displayName} detected!`, data)
+          setDetectedGesture(gesture)
+          // Use the gesture service to handle the detection
+          const hand = data.handedness?.toLowerCase() as 'left' | 'right' | 'any'
+          gestureDetectionService.handleGestureDetected(gesture, hand || 'any')
+        })
+      }
+
+      // Set up all gesture callbacks
+      setupGestureCallback('fist', 'Fist')
+      setupGestureCallback('open_palm', 'Open palm')
+      setupGestureCallback('pointing', 'Pointing')
+      setupGestureCallback('thumbs_up', 'Thumbs up')
+      setupGestureCallback('thumbs_down', 'Thumbs down')
+      setupGestureCallback('peace_sign', 'Peace sign')
+      setupGestureCallback('ok_sign', 'OK sign')
+      setupGestureCallback('rock_on', 'Rock on')
+
+  */
 
   const initializeGestureDetection = async (): Promise<void> => {
     try {
@@ -31,53 +53,25 @@ const GestureDetectionComponent: React.FC<Props> = () => {
       await gestureDetectorRef.current.initialize()
 
       // Set up gesture callbacks
-      gestureDetectorRef.current.onGesture('fist', (data) => {
-        console.log('Fist detected!', data)
-        setDetectedGesture('fist')
-        // Trigger key binding here
-      })
+      const setupGestureCallback = (gesture: string, displayName: string): void => {
+        gestureDetectorRef.current?.onGesture(gesture, (data) => {
+          // console.log(`${displayName} detected!`, data)
+          setDetectedGesture(gesture)
+          // Use the gesture service to handle the detection
+          const hand = data.handedness?.toLowerCase() as 'left' | 'right' | 'any'
+          gestureDetectionService.handleGestureDetected(gesture, hand || 'any')
+        })
+      }
 
-      gestureDetectorRef.current.onGesture('open_palm', (data) => {
-        console.log('Open palm detected!', data)
-        setDetectedGesture('open_palm')
-        // Trigger key binding here
-      })
-
-      gestureDetectorRef.current.onGesture('pointing', (data) => {
-        console.log('Pointing detected!', data)
-        setDetectedGesture('pointing')
-        // Trigger key binding here
-      })
-
-      gestureDetectorRef.current.onGesture('thumbs_up', (data) => {
-        console.log('Thumbs up detected!', data)
-        setDetectedGesture('thumbs_up')
-        // Trigger key binding here
-      })
-
-      gestureDetectorRef.current.onGesture('thumbs_down', (data) => {
-        console.log('Thumbs down detected!', data)
-        setDetectedGesture('thumbs_down')
-        // Trigger key binding here
-      })
-
-      gestureDetectorRef.current.onGesture('peace_sign', (data) => {
-        console.log('Peace sign detected!', data)
-        setDetectedGesture('peace')
-        // Trigger key binding here
-      })
-
-      gestureDetectorRef.current.onGesture('ok_sign', (data) => {
-        console.log('OK sign detected!', data)
-        setDetectedGesture('ok')
-        // Trigger key binding here
-      })
-
-      gestureDetectorRef.current.onGesture('rock_on', (data) => {
-        console.log('Rock on detected!', data)
-        setDetectedGesture('rock_on')
-        // Trigger key binding here
-      })
+      // Set up all gesture callbacks
+      setupGestureCallback('fist', 'Fist')
+      setupGestureCallback('open_palm', 'Open palm')
+      setupGestureCallback('pointing', 'Pointing')
+      setupGestureCallback('thumbs_up', 'Thumbs up')
+      setupGestureCallback('thumbs_down', 'Thumbs down')
+      setupGestureCallback('peace_sign', 'Peace sign')
+      setupGestureCallback('ok_sign', 'OK sign')
+      setupGestureCallback('rock_on', 'Rock on')
 
       // Start camera
       await startCamera()

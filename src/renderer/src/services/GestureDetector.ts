@@ -16,6 +16,7 @@ interface GestureResult {
   type: string
   confidence: number
   handedness?: string
+  hand?: 'left' | 'right' | 'any'
   landmarks?: Landmark[]
   timestamp?: number
 }
@@ -169,7 +170,7 @@ class GestureDetector {
       { type: 'rock_on', check: () => this.detectRockOn(fingers) }
     ]
 
-    console.log({ fingers })
+    // console.log({ fingers })
     // Check each gesture
     for (const gesture of gestureChecks) {
       const result = gesture.check()

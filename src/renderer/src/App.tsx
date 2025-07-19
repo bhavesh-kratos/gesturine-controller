@@ -1,12 +1,13 @@
 import Versions from './components/Versions'
 import electronLogo from './assets/electron.svg'
 import GestureDetectionComponent from './components/GestureDetectionComponent'
+import SettingsScreen from './components/Settings'
 
 function App(): React.JSX.Element {
   const ipcHandle = (): void => window.electron.ipcRenderer.send('ping')
 
   return (
-    <>
+    <div className="min-h-screen overflow-y-auto">
       {/* <img alt="logo" className="logo" src={electronLogo} />
       <div className="creator">Powered by electron-vite</div>
       <div className="text">
@@ -30,7 +31,8 @@ function App(): React.JSX.Element {
       </div> */}
       {/* <Versions></Versions> */}
       <GestureDetectionComponent />
-    </>
+      <SettingsScreen />
+    </div>
   )
 }
 

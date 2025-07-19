@@ -10,11 +10,17 @@
       "windows": {
         "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron-vite.cmd"
       },
-      "runtimeArgs": ["--sourcemap"],
+      "runtimeArgs": ["--sourcemap", "dev"],
       "env": {
         "REMOTE_DEBUGGING_PORT": "9222"
-      }
-    },
+      },
+      "outFiles": ["${workspaceFolder}/out/**/*.js"],
+      "sourceMaps": true,
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/**",
+        "!**/node_modules/**"
+      ],
+      "preLaunchTask": "Start Dev",
     {
       "name": "Debug Renderer Process",
       "port": 9222,
@@ -22,6 +28,11 @@
       "type": "chrome",
       "webRoot": "${workspaceFolder}/src/renderer",
       "timeout": 60000,
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "webpack:///./src/*": "${webRoot}/*",
+        "webpack:///src/*": "${webRoot}/*"
+      },
       "presentation": {
         "hidden": true
       }

@@ -69,7 +69,7 @@ class GestureDetector {
         runningMode: 'VIDEO', // For real-time video processing
         numHands: 2, // Track up to 2 hands
         minHandDetectionConfidence: 0.5,
-        minHandPresenceConfidence: 0.5,
+        minHandPresenceConfidence: 0.8,
         minTrackingConfidence: 0.5
       })
 
@@ -119,7 +119,7 @@ class GestureDetector {
   // Process hand landmarks to detect gestures
   private processHandLandmarks(results: HandLandmarkResult): GestureResult[] {
     const detectedGestures: GestureResult[] = []
-    console.log('Processing hand landmarks:', results)
+    // console.log('Processing hand landmarks:', results)
 
     for (let i = 0; i < results.landmarks.length; i++) {
       const landmarks = results.landmarks[i]

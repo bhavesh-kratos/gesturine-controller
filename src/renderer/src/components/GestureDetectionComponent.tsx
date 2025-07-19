@@ -49,6 +49,36 @@ const GestureDetectionComponent: React.FC<Props> = () => {
         // Trigger key binding here
       })
 
+      gestureDetectorRef.current.onGesture('thumbs_up', (data) => {
+        console.log('Thumbs up detected!', data)
+        setDetectedGesture('thumbs_up')
+        // Trigger key binding here
+      })
+
+      gestureDetectorRef.current.onGesture('thumbs_down', (data) => {
+        console.log('Thumbs down detected!', data)
+        setDetectedGesture('thumbs_down')
+        // Trigger key binding here
+      })
+
+      gestureDetectorRef.current.onGesture('peace_sign', (data) => {
+        console.log('Peace sign detected!', data)
+        setDetectedGesture('peace')
+        // Trigger key binding here
+      })
+
+      gestureDetectorRef.current.onGesture('ok_sign', (data) => {
+        console.log('OK sign detected!', data)
+        setDetectedGesture('ok')
+        // Trigger key binding here
+      })
+
+      gestureDetectorRef.current.onGesture('rock_on', (data) => {
+        console.log('Rock on detected!', data)
+        setDetectedGesture('rock_on')
+        // Trigger key binding here
+      })
+
       // Start camera
       await startCamera()
     } catch (error) {

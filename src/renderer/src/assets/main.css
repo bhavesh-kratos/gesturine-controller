@@ -1,10 +1,11 @@
+@import 'tailwindcss';
 @import './base.css';
 
 body {
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow: auto;
   background-image: url('./wavy-lines.svg');
   background-size: cover;
   user-select: none;

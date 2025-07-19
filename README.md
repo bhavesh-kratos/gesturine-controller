@@ -5,6 +5,10 @@
   <p>Control your PC with hand gestures using computer vision</p>
 </div>
 
+## Current Status 🔴
+
+Project is in development and is not ready for public use.
+
 ## Overview
 
 Gesturine Controller is an Electron-based desktop application that allows you to control your computer using hand gestures. Built with React, TypeScript, and modern computer vision technology, it enables you to map hand gestures to keyboard shortcuts and system actions.

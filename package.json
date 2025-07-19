@@ -1,10 +1,10 @@
 {
   "name": "gesturine-controller",
-  "version": "1.0.0",
-  "description": "An Electron application with React and TypeScript",
+  "version": "0.0.1",
+  "description": "Control your PC with hand gestures using computer vision",
   "main": "./out/main/index.js",
-  "author": "example.com",
-  "homepage": "https://electron-vite.org",
+  "author": "Bhavesh",
+  "homepage": "https://github.com/bhavesh-kratos/gesturine-controller",
   "scripts": {
     "format": "prettier --write .",
     "lint": "eslint --cache .",

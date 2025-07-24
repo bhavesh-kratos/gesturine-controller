@@ -79,17 +79,17 @@ Build a desktop application using Electron + React that runs in the background d
 - [ ] Define standard gesture types (fist, open palm, pointing, peace sign, thumbs up/down)
 - [ ] Implement gesture state machine for temporal recognition
 - [ ] Add gesture hold/duration detection
-- [ ] Create gesture combination support (sequential gestures)
+- [ ] FUTURE - Create gesture combination support (sequential gestures)
 - [ ] Implement gesture sensitivity controls
 - [ ] Add gesture calibration system
 
 ### Task 2.4: Performance Optimization
 
 - [ ] Implement frame rate optimization (target 30-60 FPS)
-- [ ] Add GPU acceleration where possible
+- [ ] TODO - Add GPU acceleration where possible
 - [ ] Create processing queue for gesture detection
 - [ ] Implement background processing optimization
-- [ ] Add memory management for video streams
+- [ ] FUTURE - Add memory management for video streams
 - [ ] Create performance monitoring dashboard
 
 ---
@@ -98,23 +98,23 @@ Build a desktop application using Electron + React that runs in the background d
 
 ### Task 3.1: Key Simulation Engine
 
-- [ ] Integrate robotjs for cross-platform key simulation
-- [ ] Implement key combination support (Ctrl+C, Alt+Tab, etc.)
-- [ ] Add mouse click simulation capabilities
-- [ ] Create key sequence support (multiple keys in order)
-- [ ] Implement key hold/release timing controls
-- [ ] Add safety mechanisms to prevent infinite loops
+- [x] Integrate robotjs for cross-platform key simulation
+- [x] Implement key combination support (Ctrl+C, Alt+Tab, etc.)
+- [ ] TDOO - Add mouse click simulation capabilities
+- [ ] FUTURE - Create key sequence support (multiple keys in order)
+- [ ] FUTURE - Implement key hold/release timing controls
+- [ ] TODO - Add safety mechanisms to prevent infinite loops
 
 ### Task 3.2: Gesture-to-Key Mapping System
 
 - [ ] Create gesture mapping configuration interface
-- [ ] Implement drag-and-drop gesture assignment
-- [ ] Add key recording functionality (record user input)
-- [ ] Create mapping profiles for different games/applications
-- [ ] Implement import/export of mapping configurations
-- [ ] Add gesture-to-macro support (complex key sequences)
+- [ ] NOT - Implement drag-and-drop gesture assignment
+- [x] Add key recording functionality (record user input)
+- [x] Create mapping profiles for different games/applications
+- [ ] TODO - Implement import/export of mapping configurations
+- [ ] TODO - Add gesture-to-macro support (complex key sequences)
 
-### Task 3.3: Application Context Detection
+### Task 3.3: FUTURE - Application Context Detection
 
 - [ ] Implement active window detection
 - [ ] Create application-specific profile switching
@@ -125,12 +125,12 @@ Build a desktop application using Electron + React that runs in the background d
 
 ### Task 3.4: Advanced Key Binding Features
 
-- [ ] Implement toggle gestures (on/off states)
+- [x] Implement toggle gestures (on/off states)
 - [ ] Add gesture modifier support (different actions based on duration)
-- [ ] Create gesture chaining (gesture A → gesture B → action)
-- [ ] Implement conditional gestures (if-then logic)
-- [ ] Add gesture repeat functionality
-- [ ] Create gesture cooldown system
+- [ ] FUTURE - Create gesture chaining (gesture A → gesture B → action)
+- [ ] FUTURE - Implement conditional gestures (if-then logic)
+- [ ] TODO - Add gesture repeat functionality
+- [ ] TODO - Create gesture cooldown system
 
 ---
 

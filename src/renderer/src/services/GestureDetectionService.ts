@@ -48,7 +48,10 @@ class GestureDetectionService {
     this.stopGestureKeyPress()
 
     // If no gesture is detected, we're done
-    if (!gesture) return
+    if (!gesture) {
+      this.activeGesture = null
+      return
+    }
 
     // Find matching binding for the detected gesture
     const binding = this.activeBindings.get(gesture)

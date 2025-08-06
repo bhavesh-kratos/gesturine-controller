@@ -23,28 +23,7 @@ const GestureDetectionComponent: React.FC<Props> = () => {
       }
     }
   }, [])
-  /*
-        const setupGestureCallback = (gesture: string, displayName: string): void => {
-        gestureDetectorRef.current?.onGesture(gesture, (data) => {
-          console.log(`${displayName} detected!`, data)
-          setDetectedGesture(gesture)
-          // Use the gesture service to handle the detection
-          const hand = data.handedness?.toLowerCase() as 'left' | 'right' | 'any'
-          gestureDetectionService.handleGestureDetected(gesture, hand || 'any')
-        })
-      }
 
-      // Set up all gesture callbacks
-      setupGestureCallback('fist', 'Fist')
-      setupGestureCallback('open_palm', 'Open palm')
-      setupGestureCallback('pointing', 'Pointing')
-      setupGestureCallback('thumbs_up', 'Thumbs up')
-      setupGestureCallback('thumbs_down', 'Thumbs down')
-      setupGestureCallback('peace_sign', 'Peace sign')
-      setupGestureCallback('ok_sign', 'OK sign')
-      setupGestureCallback('rock_on', 'Rock on')
-
-  */
 
   const initializeGestureDetection = async (): Promise<void> => {
     try {
@@ -56,10 +35,17 @@ const GestureDetectionComponent: React.FC<Props> = () => {
       const setupGestureCallback = (gesture: string, displayName: string): void => {
         gestureDetectorRef.current?.onGesture(gesture, (data) => {
           // console.log(`${displayName} detected!`, data)
+          console.log(`Gesture detected: ${gesture}`)
           setDetectedGesture(gesture)
           // Use the gesture service to handle the detection
           const hand = data.handedness?.toLowerCase() as 'left' | 'right' | 'any'
           gestureDetectionService.handleGestureDetected(gesture, hand || 'any')
+        })
+
+        gestureDetectorRef.current?.onGesture('no_gesture', (data) => {
+          setDetectedGesture(null)
+
+          gestureDetectionService.handleGestureDetected(null)
         })
       }
 

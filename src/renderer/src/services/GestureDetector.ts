@@ -106,9 +106,18 @@ class GestureDetector {
         const gestures = this.processHandLandmarks(results)
         this.updateGestureHistory(gestures)
         return gestures
+      } else {
+        // When no hands are detected, update gesture history with null
+        this.updateGestureHistory(null)
+        this.lastGesture = null
+        // Trigger callback with null to indicate no gesture
+        this.triggerGestureCallback('no_gesture', {
+          type: 'no_gesture',
+          confidence: 1.0,
+          timestamp: Date.now()
+        })
+        return null
       }
-
-      return null
     } catch (error) {
       console.error('Error processing frame:', error)
       return null

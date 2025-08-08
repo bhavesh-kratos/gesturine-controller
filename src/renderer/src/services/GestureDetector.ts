@@ -12,7 +12,7 @@ interface HandLandmarkResult {
   handednesses: Array<Array<{ categoryName: string }>>
 }
 
-interface GestureResult {
+export interface GestureResult {
   type: string
   confidence: number
   handedness?: string
@@ -37,9 +37,9 @@ class GestureDetector {
   private isProcessing: boolean
   private gestureCallbacks: Map<string, ((data: GestureResult) => void)[]>
   private lastGesture: string | null
-  private gestureConfidence: number
   private gestureHistory: GestureResult[]
   private gestureThreshold: number
+  private lastProcessedTimestamp: number = 0
 
   constructor() {
     this.handLandmarker = null
@@ -47,7 +47,6 @@ class GestureDetector {
     this.isProcessing = false
     this.gestureCallbacks = new Map()
     this.lastGesture = null
-    this.gestureConfidence = 0
     this.gestureHistory = []
     this.gestureThreshold = 0.8 // Minimum confidence for gesture detection
   }
@@ -55,12 +54,11 @@ class GestureDetector {
   // Initialize MediaPipe Hand Landmarker
   async initialize(): Promise<void> {
     try {
-      // Load the MediaPipe model files
+      // Use version-specific URLs for better reliability
       const vision = await FilesetResolver.forVisionTasks(
         'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm'
       )
 
-      // Create Hand Landmarker instance
       this.handLandmarker = await HandLandmarker.createFromOptions(vision, {
         baseOptions: {
           modelAssetPath:
@@ -69,10 +67,14 @@ class GestureDetector {
         },
         runningMode: 'VIDEO', // For real-time video processing
         numHands: 2, // Track up to 2 hands
-        minHandDetectionConfidence: 0.5,
-        minHandPresenceConfidence: 0.8,
-        minTrackingConfidence: 0.5
+        minHandDetectionConfidence: 0.3, // Lowered for better detection
+        minHandPresenceConfidence: 0.5, // Lowered for better detection
+        minTrackingConfidence: 0.3 // Lowered for better detection
       })
+
+      if (!this.handLandmarker) {
+        throw new Error('Failed to create HandLandmarker')
+      }
 
       this.isInitialized = true
       console.log('✅ MediaPipe Hand Landmarker initialized successfully')
@@ -91,6 +93,25 @@ class GestureDetector {
       console.warn('GestureDetector is not initialized or already processing')
       return null
     }
+
+    // More lenient video element validation
+    if (!videoElement.videoWidth || !videoElement.videoHeight) {
+      // If video dimensions are not available, wait briefly and return
+      await new Promise((resolve) => setTimeout(resolve, 100))
+      return null
+    }
+
+    // Check if video has valid content
+    if (videoElement.readyState < 2) {
+      // HAVE_CURRENT_DATA or higher
+      return null
+    }
+
+    // Ensure monotonically increasing timestamps
+    if (timestamp <= this.lastProcessedTimestamp) {
+      timestamp = this.lastProcessedTimestamp + 1
+    }
+    this.lastProcessedTimestamp = timestamp
 
     this.isProcessing = true
 
@@ -129,11 +150,9 @@ class GestureDetector {
   // Process hand landmarks to detect gestures
   private processHandLandmarks(results: HandLandmarkResult): GestureResult[] {
     const detectedGestures: GestureResult[] = []
-    // console.log('Processing hand landmarks:', results)
 
     for (let i = 0; i < results.landmarks.length; i++) {
       const landmarks = results.landmarks[i]
-      const handedness = results.worldLandmarks[i]
       const hand = results.handednesses[i][0]
 
       // Detect various gestures
@@ -143,7 +162,7 @@ class GestureDetector {
         detectedGestures.push({
           type: gesture.type,
           confidence: gesture.confidence,
-          hand: hand.categoryName, // "Left" or "Right"
+          hand: hand.categoryName.toLowerCase() as 'left' | 'right', // Convert to correct type
           landmarks: landmarks,
           timestamp: Date.now()
         })
@@ -155,17 +174,8 @@ class GestureDetector {
 
   // Main gesture detection logic
   private detectGesture(landmarks: Landmark[], handedness: string): GestureResult | null {
-    // Get key landmark points
-    const thumb = landmarks[4]
-    const indexFinger = landmarks[8]
-    const middleFinger = landmarks[12]
-    const ringFinger = landmarks[16]
-    const pinky = landmarks[20]
-    const wrist = landmarks[0]
-
     // Calculate finger extensions
     const fingers = this.getFingerStates(landmarks)
-    const extendedFingers = fingers.filter((f) => f.extended).length
 
     // Detect specific gestures
     const gestureChecks: GestureCheck[] = [

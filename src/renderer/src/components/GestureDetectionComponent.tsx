@@ -78,19 +78,22 @@ const GestureDetectionComponent: React.FC<Props> = () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
-          width: 640,
-          height: 480,
-          frameRate: 30
+          width: { ideal: 640 },
+          height: { ideal: 480 },
+          frameRate: { ideal: 30 },
+          facingMode: 'user'
         }
       })
 
-      if (videoRef.current) {
+      if (videoRef.current && canvasRef.current) {
         videoRef.current.srcObject = stream
         videoRef.current.onloadedmetadata = () => {
-          if (videoRef.current) {
+          if (videoRef.current && canvasRef.current) {
+            // Set canvas size to match video dimensions
+            canvasRef.current.width = videoRef.current.videoWidth
+            canvasRef.current.height = videoRef.current.videoHeight
             videoRef.current.play()
             setIsActive(true)
-            // Start the animation loop
             animationFrameRef.current = requestAnimationFrame(processFrame)
           }
         }
@@ -165,15 +168,40 @@ const GestureDetectionComponent: React.FC<Props> = () => {
     }
   }, [initializeGestureDetection])
 
+  useEffect(() => {
+    const handleResize = (): void => {
+      if (videoRef.current && canvasRef.current) {
+        canvasRef.current.width = videoRef.current.videoWidth
+        canvasRef.current.height = videoRef.current.videoHeight
+      }
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   return (
     <div className="gesture-detection-container">
-      <div className="video-container">
-        <video ref={videoRef} width={640} height={480} style={{ transform: 'scaleX(-1)' }} />
+      <div className="video-container" style={{ position: 'relative', width: '100%', maxWidth: '640px' }}>
+        <video
+          ref={videoRef}
+          style={{
+            width: '100%',
+            height: 'auto',
+            transform: 'scaleX(-1)',
+            objectFit: 'contain'
+          }}
+        />
         <canvas
           ref={canvasRef}
-          width={640}
-          height={480}
-          style={{ position: 'absolute', top: 0, left: 0 }}
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'contain'
+          }}
         />
       </div>
 

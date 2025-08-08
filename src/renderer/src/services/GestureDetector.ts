@@ -67,9 +67,9 @@ class GestureDetector {
         },
         runningMode: 'VIDEO', // For real-time video processing
         numHands: 2, // Track up to 2 hands
-        minHandDetectionConfidence: 0.3, // Lowered for better detection
+        minHandDetectionConfidence: 0.5, // Lowered for better detection
         minHandPresenceConfidence: 0.5, // Lowered for better detection
-        minTrackingConfidence: 0.3 // Lowered for better detection
+        minTrackingConfidence: 0.5 // Lowered for better detection
       })
 
       if (!this.handLandmarker) {
